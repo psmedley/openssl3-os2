@@ -19,6 +19,7 @@ use lib "$FindBin::Bin/perl";
 use OpenSSL::fallback "$FindBin::Bin/../external/perl/MODULES.txt";
 use Getopt::Std;
 use OpenSSL::Template;
+use configdata;
 
 # We expect to get a lot of information from configdata, so check that
 # it was part of our commandline.

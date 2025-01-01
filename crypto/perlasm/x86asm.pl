@@ -265,11 +265,13 @@ sub ::asm_init
 
     $i386=$cpu;
 
-    $elf=$cpp=$coff=$aout=$macosx=$win32=$mwerks=$android=0;
+    $elf=$cpp=$coff=$aout=$macosx=$win32=$mwerks=$android=$os2=0;
     if    (($type eq "elf"))
     {	$elf=1;			require "x86gas.pl";	}
     elsif (($type eq "elf-1"))
     {	$elf=-1;		require "x86gas.pl";	}
+    elsif (($type eq "os2-a\.out"))
+    {	$aout=1; $os2=1;	require "x86gas.pl";	}
     elsif (($type eq "a\.out"))
     {	$aout=1;		require "x86gas.pl";	}
     elsif (($type eq "coff" or $type eq "gaswin"))
@@ -287,6 +289,7 @@ sub ::asm_init
 Pick one target type from
 	elf	- Linux, FreeBSD, Solaris x86, etc.
 	a.out	- DJGPP, elder OpenBSD, etc.
+	os2-a.out - OS/2 with gcc (EMX, kNIX)
 	coff	- GAS/COFF such as Win32 targets
 	win32n	- Windows 95/Windows NT NASM format
 	macosx	- Mac OS X

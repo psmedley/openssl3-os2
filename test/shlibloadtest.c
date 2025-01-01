@@ -170,7 +170,7 @@ static int test_lib(void)
     }
 
     if (test_type == DSO_REFTEST) {
-# ifdef DSO_DLFCN
+# if defined(DSO_DLFCN) && !defined(OPENSSL_SYS_OS2)
         DSO_dsobyaddr_t myDSO_dsobyaddr;
         DSO_free_t myDSO_free;
 

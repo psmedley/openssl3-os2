@@ -117,6 +117,11 @@ extern "C" {
 #  endif
 # endif
 
+/* --------------------------------- OS/2 ---------------------------------- */
+# if defined(__OS2__) && !defined(OPENSSL_SYS_OS2)
+#  define OPENSSL_SYS_OS2
+# endif
+
 /* -------------------------------- Unix ---------------------------------- */
 # ifdef OPENSSL_SYS_UNIX
 #  if defined(linux) || defined(__linux__) && !defined(OPENSSL_SYS_LINUX)
@@ -179,6 +184,9 @@ extern "C" {
 # if defined(OPENSSL_SYS_WINDOWS) && defined(OPENSSL_OPT_WINDLL)
 #  define OPENSSL_EXPORT extern __declspec(dllexport)
 #  define OPENSSL_EXTERN extern __declspec(dllimport)
+# elif defined(OPENSSL_SYS_OS2)
+#  define OPENSSL_EXPORT extern __declspec(dllexport)
+#  define OPENSSL_EXTERN extern 
 # else
 #  define OPENSSL_EXPORT extern
 #  define OPENSSL_EXTERN extern

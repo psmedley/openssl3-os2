@@ -146,7 +146,7 @@ typedef size_t socklen_t;        /* Currently appears to be missing on VMS */
  * bad versions.
  */
 # if !defined(OPENSSL_USE_IPV6)
-#  if defined(AF_INET6)
+#  if defined(AF_INET6) && !defined(OPENSSL_SYS_OS2)
 #   define OPENSSL_USE_IPV6 1
 #  else
 #   define OPENSSL_USE_IPV6 0

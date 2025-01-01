@@ -30,6 +30,11 @@
 #include "bio_local.h"
 #include <openssl/err.h>
 
+#if defined(OPENSSL_SYS_OS2)
+# include <io.h>
+# include <fcntl.h>
+#endif
+
 #if !defined(OPENSSL_NO_STDIO)
 
 static int file_write(BIO *h, const char *buf, int num);
@@ -261,6 +266,12 @@ static long file_ctrl(BIO *b, int cmd, long num, void *ptr)
             int fd = fileno((FILE *)ptr);
             if (!(num & BIO_FP_TEXT))
                 setmode(fd, O_BINARY);
+# elif defined(OPENSSL_SYS_OS2)
+            int fd = fileno((FILE *)ptr);
+            if (num & BIO_FP_TEXT)
+                setmode(fd, O_TEXT);
+            else
+                setmode(fd, O_BINARY);
 # endif
         }
         break;
@@ -283,7 +294,7 @@ static long file_ctrl(BIO *b, int cmd, long num, void *ptr)
             ret = 0;
             break;
         }
-# if defined(OPENSSL_SYS_MSDOS) || defined(OPENSSL_SYS_WINDOWS)
+# if defined(OPENSSL_SYS_MSDOS) || defined(OPENSSL_SYS_WINDOWS) || defined(OPENSSL_SYS_OS2)
         if (!(num & BIO_FP_TEXT))
             OPENSSL_strlcat(p, "b", sizeof(p));
         else

@@ -19,6 +19,8 @@
      sub sharedaix  { !$disabled{shared} && $target{shared_target} =~ /^aix(?!-solib$)/ }
      sub sharedaix_solib  { !$disabled{shared} && $target{shared_target} =~ /^aix-solib$/ }
 
+     sub os2dll  { !$disabled{shared} && $config{target} =~ /^os2/ }
+     
      our $sover_dirname = platform->shlib_version_as_filename();
 
      # This makes sure things get built in the order they need
@@ -658,7 +660,7 @@ install_sw: install_dev install_engines install_modules install_runtime ## Insta
 
 uninstall_sw: uninstall_runtime uninstall_modules uninstall_engines uninstall_dev ## Uninstall the software and libraries
 
-install_docs: install_man_docs install_html_docs ## Install manpages and HTML documentation
+install_docs: install_man_docs  ## Install manpages and HTML documentation
 
 uninstall_docs: uninstall_man_docs uninstall_html_docs ## Uninstall manpages and HTML documentation
 	$(RM) -r "$(DESTDIR)$(DOCDIR)"
@@ -771,12 +773,12 @@ install_dev: install_runtime_libs
 		fn1=`basename "$$s1"`; \
 		fn2=`basename "$$s2"`; \
 		fn3=`basename "$$s3"`; \
-		: {- output_off(); output_on() unless windowsdll() or sharedaix() or sharedaix_solib(); "" -}; \
+		: {- output_off(); output_on() unless windowsdll() or sharedaix() or sharedaix_solib() or os2dll(); "" -}; \
 		if [ "$$fn2" != "" ]; then \
 			$(ECHO) "link $(DESTDIR)$(libdir)/$$fn2 -> $(DESTDIR)$(libdir)/$$fn1"; \
 			ln -sf $$fn1 "$(DESTDIR)$(libdir)/$$fn2"; \
 		fi; \
-		: {- output_off() unless windowsdll() or sharedaix() or sharedaix_solib(); output_on() if windowsdll() or sharedaix_solib(); "" -}; \
+		: {- output_off() unless windowsdll() or sharedaix() or sharedaix_solib() or os2dll(); output_on() if windowsdll() or sharedaix_solib(); "" -}; \
 		if [ "$$fn3" != "" ]; then \
 			$(ECHO) "install $$s3 -> $(DESTDIR)$(libdir)/$$fn3"; \
 			cp $$s3 "$(DESTDIR)$(libdir)/$$fn3.new"; \
@@ -784,7 +786,7 @@ install_dev: install_runtime_libs
 			mv -f "$(DESTDIR)$(libdir)/$$fn3.new" \
 			      "$(DESTDIR)$(libdir)/$$fn3"; \
 		fi; \
-		: {- output_off() if windowsdll() or sharedaix_solib(); output_on() if sharedaix(); "" -}; \
+		: {- output_off() if windowsdll() or sharedaix_solib() or os2dll(); output_on() if sharedaix(); "" -}; \
 		a="$(DESTDIR)$(libdir)/$$fn2"; \
 		$(ECHO) "install $$s1 -> $$a"; \
 		if [ -f $$a ]; then ( trap "rm -rf /tmp/ar.$$$$" INT 0; \
@@ -1676,6 +1678,12 @@ EOF
           return <<"EOF";
 $args{src}: $gen0 $deps \$(BLDDIR)/util/wrap.pl
 	\$(PERL) \$(BLDDIR)/util/wrap.pl $gen0$gen_args > \$@
+EOF
+      } elsif (os2dll()) {
+          $recipe .= <<"EOF";
+	rm -f $lib\$(SHLIB_EXT_IMPORT) && \\
+	emximp -o $lib\$(SHLIB_EXT_IMPORT) $shlib\$(SHLIB_EXT)
+INSTALL_SHLIBS += $lib\$(SHLIB_EXT_IMPORT)
 EOF
       } else {
           #

@@ -18,6 +18,8 @@ use lib "$FindBin::Bin/perl";
 
 use OpenSSL::Ordinals;
 
+use POSIX qw(strftime);
+
 use lib '.';
 use configdata;
 
@@ -133,6 +135,7 @@ my %OS_data = (
     NT          => 'WIN32',     # alias
     nt          => 'WIN32',     # alias
     mingw       => 'WINDOWS',   # alias
+    os2         => 'OS2',       # alias
     nonstop     => { writer     => \&writer_nonstop,
                      sort       => OpenSSL::Ordinals::by_name(),
                      platforms  => { TANDEM                     => 1 } },

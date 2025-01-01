@@ -387,6 +387,18 @@ static ssize_t syscall_random(void *buf, size_t buflen)
     return syscall(__NR_getrandom, buf, buflen, 0);
 #  elif (defined(__FreeBSD__) || defined(__NetBSD__)) && defined(KERN_ARND)
     return sysctl_random(buf, buflen);
+#  elif defined(OPENSSL_SYS_OS2)
+    int i;
+    char *buf2 = buf;
+    for (i = 0; i < buflen;) {
+        unsigned long ul = (unsigned long)random();
+        *buf2++ = (unsigned char)(ul);
+        i++;
+        if (i <= buflen)
+          *buf2++ = (unsigned char)(ul >> 8);
+        i++;
+    }
+    return (ssize_t)buflen;
 #  elif (defined(__DragonFly__)  && __DragonFly_version >= 500700) \
      || (defined(__NetBSD__) && __NetBSD_Version >= 1000000000)
     return getrandom(buf, buflen, 0);

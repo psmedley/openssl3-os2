@@ -170,7 +170,7 @@ sub ::file_end
 	my $tmp=".comm\t${nmdecor}OPENSSL_ia32cap_P,16";
 	if ($::macosx)	{ push (@out,"$tmp,2\n"); }
 	elsif ($::elf)	{ push (@out,"$tmp,4\n"); }
-	else		{ push (@out,"$tmp\n"); }
+	else		{ if (!($::os2 && $::aout)) { push (@out,"$tmp\n"); } }
     }
     push(@out,$initseg) if ($initseg);
     if ($::elf) {

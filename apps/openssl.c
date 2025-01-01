@@ -7,6 +7,10 @@
  * https://www.openssl.org/source/license.html
  */
 
+#if defined(__KLIBC__)
+# include <float.h>
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "internal/common.h"
@@ -242,6 +246,10 @@ int main(int argc, char *argv[])
     int global_help = 0;
     int global_version = 0;
     int ret = 0;
+
+#if defined(__KLIBC__)
+    _control87(MCW_EM, MCW_EM); /* OS/2: Mask all FPEs (to avoid SIGPFE on some C) */
+#endif
 
     arg.argv = NULL;
     arg.size = 0;
